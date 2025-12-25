@@ -1,41 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Leather Lab | Pro Dashboard</title>
+    <title>Thread Calculator | Leather Lab</title>
     <style>
         :root { --p: #2563eb; --bg: #f8fafc; --b: #e2e8f0; --t: #0f172a; --ts: #64748b; }
         body { background: var(--bg); color: var(--t); font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; justify-content: center; padding: 20px; }
         .app { width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
         .card { background: #fff; border: 1px solid var(--b); border-radius: 20px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
         .header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+        .header h1 { font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
         select { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--b); background: #fff; font-weight: 600; cursor: pointer; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .field { display: flex; flex-direction: column; }
         label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--ts); margin-bottom: 8px; }
-        input, textarea { padding: 14px; border: 1.5px solid var(--b); border-radius: 12px; font-size: 16px; width: 100%; box-sizing: border-box; background: #fdfdfd; }
-        input:focus { outline: none; border-color: var(--p); background: #fff; }
+        input, textarea { padding: 14px; border: 1.5px solid var(--b); border-radius: 12px; font-size: 16px; width: 100%; box-sizing: border-box; background: #fdfdfd; transition: 0.2s; }
+        input:focus { outline: none; border-color: var(--p); background: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05); }
         
-        /* Results Section */
         .result-section { margin-top: 32px; border-top: 1px solid var(--b); padding-top: 24px; }
         .res-title { font-size: 13px; font-weight: 800; color: var(--ts); text-align: center; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
         .results { background: #f1f5f9; border-radius: 16px; padding: 24px; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
         .res-v { display: block; font-size: 24px; font-weight: 800; color: var(--p); }
         .res-l { font-size: 11px; font-weight: 600; color: var(--ts); }
         
-        /* Converters Row - 3 columns for better fit */
         .conv-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; border-top: 1px dashed var(--b); padding-top: 24px; }
         .conv-card { padding: 16px; border: 1px solid var(--b); border-radius: 14px; background: #fdfdfd; }
         .conv-val { margin-top: 10px; font-weight: 800; color: var(--p); font-size: 15px; }
 
-        .btn { width: 100%; background: var(--t); color: #fff; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 16px; }
-        @media (max-width: 850px) { 
-            .app { grid-template-columns: 1fr; } 
-            .grid { grid-template-columns: 1fr; } 
-            .conv-row { grid-template-columns: 1fr; }
-        }
+        .btn { width: 100%; background: var(--t); color: #fff; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        @media (max-width: 850px) { .app { grid-template-columns: 1fr; } .grid, .conv-row { grid-template-columns: 1fr; } }
         .rtl { direction: rtl; text-align: right; }
     </style>
 </head>
@@ -43,10 +38,10 @@
 
 <div class="app" id="main-app">
     <header class="header">
-        <h1 id="ui-title">Leather Lab</h1>
+        <h1 id="ui-title">Калькулятор нитки</h1>
         <select id="sel-lang" onchange="applyLang()">
-            <option value="en">English</option>
             <option value="ua">Українська</option>
+            <option value="en">English</option>
             <option value="es">Español</option>
             <option value="de">Deutsch</option>
             <option value="fr">Français</option>
@@ -56,14 +51,14 @@
 
     <main class="card">
         <div class="grid">
-            <div class="field"><label id="l-len">Length (mm)</label><input type="number" id="v-len" oninput="runCalculation()" placeholder="0"></div>
-            <div class="field"><label id="l-thick">Thickness (mm)</label><input type="number" id="v-thick" oninput="runCalculation()" placeholder="0"></div>
-            <div class="field"><label id="l-step">Stitch Step (mm)</label><input type="number" id="v-step" oninput="runCalculation()" placeholder="0"></div>
-            <div class="field"><label id="l-needle">Needle Length (mm)</label><input type="number" id="v-needle" oninput="runCalculation()" placeholder="0"></div>
+            <div class="field"><label id="l-len">Периметр виробу, що прошивається (мм)*</label><input type="number" id="v-len" oninput="runCalculation()" placeholder="0"></div>
+            <div class="field"><label id="l-thick">Товщина виробу (мм)*</label><input type="number" id="v-thick" oninput="runCalculation()" placeholder="0"></div>
+            <div class="field"><label id="l-step">Довжина стібка (мм)*</label><input type="number" id="v-step" oninput="runCalculation()" placeholder="0"></div>
+            <div class="field"><label id="l-needle">Довжина голки (мм)*</label><input type="number" id="v-needle" oninput="runCalculation()" placeholder="0"></div>
         </div>
 
         <div class="result-section">
-            <div class="res-title" id="res-header">Estimated thread amount</div>
+            <div class="res-title" id="res-header">Необхідна кількість нитки</div>
             <div class="results">
                 <div><span class="res-l">MM</span><span class="res-v" id="r-mm">0</span></div>
                 <div><span class="res-l">CM</span><span class="res-v" id="r-cm">0</span></div>
@@ -72,55 +67,40 @@
         </div>
 
         <div class="conv-row">
-            <div class="conv-card">
-                <label>INCH ⮕ MM</label>
-                <input type="number" id="c-in" oninput="runCalculation()" placeholder="1">
-                <div id="out-in-mm" class="conv-val">0.00 mm</div>
-            </div>
-            <div class="conv-card">
-                <label>SPI ⮕ MM</label>
-                <input type="number" id="c-spi" oninput="runCalculation()" placeholder="7">
-                <div id="out-spi" class="conv-val">0.00 mm</div>
-            </div>
-            <div class="conv-card">
-                <label>OZ ⮕ MM</label>
-                <input type="number" id="c-oz" oninput="runCalculation()" placeholder="4">
-                <div id="out-oz" class="conv-val">0.00 mm</div>
-            </div>
+            <div class="conv-card"><label>INCH ⮕ MM</label><input type="number" id="c-in" oninput="runCalculation()" placeholder="1"><div id="out-in-mm" class="conv-val">25.40 mm</div></div>
+            <div class="conv-card"><label>SPI ⮕ MM</label><input type="number" id="c-spi" oninput="runCalculation()" placeholder="7"><div id="out-spi" class="conv-val">3.63 mm</div></div>
+            <div class="conv-card"><label>OZ ⮕ MM</label><input type="number" id="c-oz" oninput="runCalculation()" placeholder="4"><div id="out-oz" class="conv-val">1.60 mm</div></div>
         </div>
     </main>
 
     <aside class="card" style="height: fit-content;">
-        <label id="l-notes">Project Notes</label>
+        <label id="l-notes">Нотатки</label>
         <textarea id="v-notes" placeholder="..." style="height:140px; margin-top:10px; resize:none;"></textarea>
-        <button class="btn" id="btn-copy" onclick="copyData()">Copy Report</button>
+        <button class="btn" id="btn-copy" onclick="copyData()">Копіювати звіт</button>
         <div style="margin-top: 30px; font-size: 12px; color: var(--ts); line-height: 1.6;">
-            1 inch = 25.4 mm<br>
-            1 oz ≈ 0.4 mm<br>
-            SPI = Stitches Per Inch
+            1 inch = 25.4 mm<br>1 oz ≈ 0.4 mm<br>SPI = Stitches Per Inch
         </div>
     </aside>
 </div>
 
 <script>
     const dictionary = {
-        en: { title: "Leather Lab", len: "Length", thick: "Thickness", step: "Stitch Step", needle: "Needle Length", notes: "Project Notes", copy: "Copy Report", res_header: "Estimated thread amount" },
-        ua: { title: "Майстерня", len: "Довжина", thick: "Товщина", step: "Крок", needle: "Голка", notes: "Нотатки", copy: "Копіювати", res_header: "Необхідна кількість нитки" },
-        es: { title: "Lab Cuero", len: "Longitud", thick: "Grosor", step: "Puntada", needle: "Aguja", notes: "Notas", copy: "Copiar", res_header: "Cantidad estimada de hilo" },
-        de: { title: "Leder Lab", len: "Länge", thick: "Dicke", step: "Stich", needle: "Nadel", notes: "Notizen", copy: "Kopieren", res_header: "Geschätzte Fadenmenge" },
-        fr: { title: "Atelier", len: "Longueur", thick: "Épaisseur", step: "Point", needle: "Aiguille", notes: "Notes", copy: "Copiar", res_header: "Quantité de fil estimée" },
-        ar: { title: "معمل الجلد", len: "الطول", thick: "السمك", step: "الغرزة", needle: "الإبرة", notes: "ملاحظات", copy: "نسخ", res_header: "كمية الخيط المطلوبة" }
+        ua: { title: "Калькулятор нитки", len: "Периметр виробу, що прошивається (мм)*", thick: "Товщина виробу (мм)*", step: "Довжина стібка (мм)*", needle: "Довжина голки (мм)*", notes: "Нотатки", copy: "Копіювати звіт", res_header: "Необхідна кількість нитки" },
+        en: { title: "Thread Calculator", len: "Stitching perimeter (mm)*", thick: "Product thickness (mm)*", step: "Stitch length (mm)*", needle: "Needle length (mm)*", notes: "Project Notes", copy: "Copy Report", res_header: "Estimated thread amount" },
+        es: { title: "Calculadora de hilo", len: "Perímetro de costura (mm)*", thick: "Grosor del producto (mm)*", step: "Largo de puntada (mm)*", needle: "Largo de aguja (mm)*", notes: "Notas", copy: "Copiar reporte", res_header: "Cantidad estimada de hilo" },
+        de: { title: "Fadenrechner", len: "Nahtumfang (mm)*", thick: "Produktdicke (mm)*", step: "Stichlänge (mm)*", needle: "Nadellänge (mm)*", notes: "Notizen", copy: "Kopieren", res_header: "Geschätzte Fadenmenge" },
+        fr: { title: "Calculateur de fil", len: "Périmètre de couture (mm)*", thick: "Épaisseur du produit (mm)*", step: "Longueur du point (mm)*", needle: "Longueur de l'aiguille (mm)*", notes: "Notes", copy: "Copier le rapport", res_header: "Quantité de fil estimée" },
+        ar: { title: "حاسبة الخيط", len: "محيط الخياطة (مم)*", thick: "سمك المنتج (مم)*", step: "طول الغرزة (مم)*", needle: "طول الإبرة (مم)*", notes: "ملاحظات", copy: "نسخ التقرير", res_header: "كمية الخيط المطلوبة" }
     };
 
     function applyLang() {
         const l = document.getElementById('sel-lang').value;
         const d = dictionary[l];
-        
         document.getElementById('ui-title').innerText = d.title;
-        document.getElementById('l-len').innerText = d.len + ' (mm)';
-        document.getElementById('l-thick').innerText = d.thick + ' (mm)';
-        document.getElementById('l-step').innerText = d.step + ' (mm)';
-        document.getElementById('l-needle').innerText = d.needle + ' (mm)';
+        document.getElementById('l-len').innerText = d.len;
+        document.getElementById('l-thick').innerText = d.thick;
+        document.getElementById('l-step').innerText = d.step;
+        document.getElementById('l-needle').innerText = d.needle;
         document.getElementById('l-notes').innerText = d.notes;
         document.getElementById('btn-copy').innerText = d.copy;
         document.getElementById('res-header').innerText = d.res_header;
@@ -133,7 +113,6 @@
         const S = parseFloat(document.getElementById('v-step').value) || 0;
         const N = parseFloat(document.getElementById('v-needle').value) || 0;
 
-        // Расчет результата (показываем цифры только если все поля > 0)
         if (L > 0 && T > 0 && S > 0 && N > 0) {
             let mm = (L / S * (S + 2 * T)) + (N * 4);
             document.getElementById('r-mm').innerText = Math.round(mm);
@@ -145,15 +124,12 @@
             document.getElementById('r-in').innerText = "0";
         }
 
-        // 1. Конвертер INCH -> MM
         const inchVal = parseFloat(document.getElementById('c-in').value) || 0;
         document.getElementById('out-in-mm').innerText = (inchVal * 25.4).toFixed(2) + " mm";
 
-        // 2. Конвертер SPI -> MM
         const spiVal = parseFloat(document.getElementById('c-spi').value) || 0;
         document.getElementById('out-spi').innerText = spiVal > 0 ? (25.4 / spiVal).toFixed(2) + " mm" : "0.00 mm";
 
-        // 3. Конвертер OZ -> MM
         const ozVal = parseFloat(document.getElementById('c-oz').value) || 0;
         document.getElementById('out-oz').innerText = ozVal > 0 ? (ozVal * 0.4).toFixed(2) + " mm" : "0.00 mm";
     }
@@ -170,7 +146,10 @@
         setTimeout(() => applyLang(), 1500);
     }
 
-    window.onload = applyLang;
+    window.onload = () => {
+        applyLang();
+        runCalculation();
+    };
 </script>
 </body>
 </html>
