@@ -17,6 +17,7 @@
         .field { display: flex; flex-direction: column; }
         label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--ts); margin-bottom: 8px; }
         
+        /* Тусклый цвет текста во всех полях ввода */
         input, textarea { 
             padding: 14px; 
             border: 1.5px solid var(--b); 
@@ -26,7 +27,7 @@
             box-sizing: border-box; 
             background: #fdfdfd; 
             transition: 0.2s; 
-            color: #64748b;
+            color: #64748b; 
             font-weight: 500;
         }
         
@@ -67,6 +68,8 @@
         <select id="sel-lang" onchange="applyLang(true)">
             <option value="en">English</option>
             <option value="ua">Українська</option>
+            <option value="zh">简体中文</option>
+            <option value="ja">日本語</option>
             <option value="es">Español</option>
             <option value="de">Deutsch</option>
             <option value="fr">Français</option>
@@ -92,9 +95,9 @@
         </div>
 
         <div class="conv-row">
-            <div class="conv-card"><label>INCH ⮕ MM</label><input type="number" id="c-in" oninput="runCalculation()" placeholder="1"><div id="out-in-mm" class="conv-val">25.40 mm</div></div>
-            <div class="conv-card"><label>SPI ⮕ MM</label><input type="number" id="c-spi" oninput="runCalculation()" placeholder="7"><div id="out-spi" class="conv-val">3.63 mm</div></div>
-            <div class="conv-card"><label>OZ ⮕ MM</label><input type="number" id="c-oz" oninput="runCalculation()" placeholder="4"><div id="out-oz" class="conv-val">1.60 mm</div></div>
+            <div class="conv-card"><label>INCH ⮕ MM</label><input type="number" id="c-in" oninput="runCalculation()" placeholder="0"><div id="out-in-mm" class="conv-val">25.40 mm</div></div>
+            <div class="conv-card"><label>SPI ⮕ MM</label><input type="number" id="c-spi" oninput="runCalculation()" placeholder="0"><div id="out-spi" class="conv-val">3.63 mm</div></div>
+            <div class="conv-card"><label>OZ ⮕ MM</label><input type="number" id="c-oz" oninput="runCalculation()" placeholder="0"><div id="out-oz" class="conv-val">1.60 mm</div></div>
         </div>
     </main>
 
@@ -109,6 +112,8 @@
     const dictionary = {
         en: { title: "Thread Calculator", len: "Stitching perimeter (mm)*", thick: "Product thickness (mm)*", step: "Stitch length (mm)*", needle: "Needle length (mm)*", notes: "Project Notes", placeholder: "For example, the name of the product", copy: "Copy Report", res_header: "Estimated thread amount" },
         ua: { title: "Калькулятор нитки", len: "Периметр виробу, що прошивається (мм)*", thick: "Товщина виробу (мм)*", step: "Довжина стібка (мм)*", needle: "Довжина голки (мм)*", notes: "Нотатки", placeholder: "Наприклад, назва виробу", copy: "Копіювати звіт", res_header: "Необхідна кількість нитки" },
+        zh: { title: "用线量计算器", len: "缝合周长 (mm)*", thick: "产品厚度 (mm)*", step: "针距长度 (mm)*", needle: "缝针长度 (mm)*", notes: "项目备注", placeholder: "例如，产品名称", copy: "复制报告", res_header: "预计用线量" },
+        ja: { title: "糸計算機", len: "縫い目の周囲 (mm)*", thick: "製品の厚さ (mm)*", step: "針目の長さ (mm)*", needle: "針の長さ (mm)*", notes: "プロジェクトメモ", placeholder: "例：製品名", copy: "レポートをコピー", res_header: "必要な糸の推定数" },
         es: { title: "Calculadora de hilo", len: "Perímetro de costura (mm)*", thick: "Grosor del producto (mm)*", step: "Largo de puntada (mm)*", needle: "Largo de aguja (mm)*", notes: "Notas", placeholder: "Por ejemplo, el nombre del producto", copy: "Copiar reporte", res_header: "Cantidad estimada de hilo" },
         de: { title: "Fadenrechner", len: "Nahtumfang (mm)*", thick: "Produktdicke (mm)*", step: "Stichlänge (mm)*", needle: "Nadellänge (mm)*", notes: "Notizen", placeholder: "Zum Beispiel der Name des Produkts", copy: "Kopieren", res_header: "Geschätzte Fadenmenge" },
         fr: { title: "Calculateur de fil", len: "Périmètre de couture (mm)*", thick: "Épaisseur du produit (mm)*", step: "Longueur du point (mm)*", needle: "Longueur de l'aiguille (mm)*", notes: "Notes", placeholder: "Par exemple, le nom du produit", copy: "Copier le rapport", res_header: "Quantité de fil estimée" },
@@ -119,6 +124,7 @@
         const l = document.getElementById('sel-lang').value;
         const d = dictionary[l];
         if (save) localStorage.setItem('userLang', l);
+
         document.getElementById('ui-title').innerText = d.title;
         document.getElementById('l-len').innerText = d.len;
         document.getElementById('l-thick').innerText = d.thick;
